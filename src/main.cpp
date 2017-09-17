@@ -1,7 +1,7 @@
-#include <uWS/uWS.h>
 #include <iostream>
-#include "json.hpp"
 #include <math.h>
+#include <uWS/uWS.h>
+#include "json.hpp"
 #include "FusionEKF.h"
 #include "tools.h"
 
@@ -172,14 +172,13 @@ int main()
 	});
 
 	int port = 4567;
-	if (h.listen(port))
-	{
+	if (h.listen(port)) {
 		std::cout << "Listening to port " << port << std::endl;
 	}
-	else
-	{
+	else {
 		std::cerr << "Failed to listen to port" << std::endl;
 		return -1;
 	}
+
 	h.run();
 }
