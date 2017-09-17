@@ -2,7 +2,6 @@
 #define KALMAN_FILTER_H_
 
 #include "Eigen/Dense"
-#include "tools.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -18,8 +17,6 @@ public:
 	MatrixXd Q_;  // process covariance matrix
 	MatrixXd H_;  // measurement matrix
 	MatrixXd R_;  // measurement covariance matrix
-
-	Tools tools;
 
 	/** Initializes the Kalman filter
 	* @param x_in Initial state
