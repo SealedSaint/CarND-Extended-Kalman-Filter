@@ -1,7 +1,8 @@
+#include <iostream>
+#include <math.h>
+#include "Eigen/Dense"
 #include "FusionEKF.h"
 #include "tools.h"
-#include "Eigen/Dense"
-#include <iostream>
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -84,7 +85,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 			// Convert radar from polar to cartesian coordinates
 			cout << "Received a RADAR measurement first" << endl;
-			x_init << 1, 1, 1, 1;
+			float r = measurement_pack.raw_measurements_[0];
+			float radians = measurement_pack.raw_measurements_[1];
+			// cout << "Raw: " << endl;
+			// cout << measurement_pack.raw_measurements_ << endl;
+			x_init << r*cos(radians), r*sin(radians), 0, 0;
+			// cout << "Initial X: " << endl;
+			// cout << x_init << endl;
 		}
 		else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
 			// Initialize state with location and zero velocity
@@ -93,8 +100,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		}
 
 		MatrixXd P_init = MatrixXd(4, 4);
-		P_init << 1000, 0, 0, 0,
-				  0, 1000, 0, 0,
+		P_init << 1, 0, 0, 0,
+				  0, 1, 0, 0,
 				  0, 0, 1000, 0,
 				  0, 0, 0, 1000;
 
@@ -135,9 +142,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	* Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
 	*/
 
-	// cout << "Updating State Trans Matrix F" << endl;
+	cout << "Updating State Trans Matrix F" << endl;
 	UpdateStateTransMatrixF(dt);
-	// cout << "Updating Process Covariance Matrix Q" << endl;
+	cout << "Updating Process Covariance Matrix Q" << endl;
 	UpdateProcessCovarianceMatrixQ(dt);
 
 	cout << "Predicting..." << endl;
@@ -156,7 +163,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 		// Radar updates
 		ekf_.R_ = R_radar_;
-		// cout << "Calculating Jacobian..." << endl;
+		cout << "Calculating Jacobian..." << endl;
 		Hj_ = tools.CalculateJacobian(ekf_.x_);
 		ekf_.H_ = Hj_;
 		cout << "Updating for RADAR..." << endl;
