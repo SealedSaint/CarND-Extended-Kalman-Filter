@@ -84,15 +84,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 			// Convert radar from polar to cartesian coordinates
 			cout << "Received a RADAR measurement first" << endl;
-			cout << "Raw: " << endl;
-			cout << measurement_pack.raw_measurements_ << endl;
-			VectorXd converted = tools.CalculateJacobian(measurement_pack.raw_measurements_);
-			cout << "Jacobian: " << endl;
-			cout << converted << endl;
-			x_init = converted;
+			x_init << 1, 1, 1, 1;
 		}
 		else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
 			// Initialize state with location and zero velocity
+			cout << "Received a LIDAR measurement first" << endl;
 			x_init << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
 		}
 
@@ -116,6 +112,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
 		// H and R get set before the update is called based on input type, so need to differentiate here
 		ekf_.Init(x_init, P_init, F_init, H_laser_, R_laser_, Q_init);
+		cout << "Initialized EKF" << endl;
 
 		previous_timestamp_ = measurement_pack.timestamp_;
 		is_initialized_ = true;
@@ -138,9 +135,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	* Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
 	*/
 
+	// cout << "Updating State Trans Matrix F" << endl;
 	UpdateStateTransMatrixF(dt);
+	// cout << "Updating Process Covariance Matrix Q" << endl;
 	UpdateProcessCovarianceMatrixQ(dt);
 
+	cout << "Predicting..." << endl;
 	ekf_.Predict();
 
 	/*****************************************************************************
@@ -156,14 +156,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 		// Radar updates
 		ekf_.R_ = R_radar_;
+		// cout << "Calculating Jacobian..." << endl;
 		Hj_ = tools.CalculateJacobian(ekf_.x_);
 		ekf_.H_ = Hj_;
+		cout << "Updating for RADAR..." << endl;
 		ekf_.UpdateEKF(z);
 	}
 	else {
 		// Laser updates
 		ekf_.R_ = R_laser_;
 		ekf_.H_ = H_laser_;
+		cout << "Updating for LIDAR..." << endl;
 		ekf_.Update(z);
 	}
 
