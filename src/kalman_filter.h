@@ -2,6 +2,7 @@
 #define KALMAN_FILTER_H_
 
 #include "Eigen/Dense"
+#include "tools.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -44,6 +45,8 @@ public:
 	*/
 	void UpdateEKF(const VectorXd &z);
 
+private:
+	Tools tools;
 };
 
 #endif /* KALMAN_FILTER_H_ */

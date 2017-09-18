@@ -9,25 +9,27 @@ using namespace std;
 
 class Tools {
 public:
-  /**
-  * Constructor.
-  */
-  Tools();
+	/**
+	* Constructor.
+	*/
+	Tools();
 
-  /**
-  * Destructor.
-  */
-  virtual ~Tools();
+	/**
+	* Destructor.
+	*/
+	virtual ~Tools();
 
-  /**
-  * A helper method to calculate RMSE.
-  */
-  VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
+	// A helper method to calculate RMSE
+	VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
 
-  /**
-  * A helper method to calculate Jacobians.
-  */
-  MatrixXd CalculateJacobian(const VectorXd& x_state);
+	// A helper method to calculate Jacobians
+	MatrixXd CalculateJacobian(const VectorXd& x_state);
+
+	// Converts (px, py, vx, vy) state vector x into a radar measurement (rho, phi, rho-dot)
+	VectorXd ConvertToPolar(const VectorXd& x_state);
+
+	// Normalizes phi between -pi and pi for a polar coordinate vector (rho, phi, rho-dot)
+	void NormalizeAngle(VectorXd& polar);
 
 };
 

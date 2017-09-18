@@ -77,3 +77,31 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
 	return Hj;
 }
+
+VectorXd Tools::ConvertToPolar(const VectorXd& x_state) {
+	float px = x_state(0);
+	float py = x_state(1);
+	float vx = x_state(2);
+	float vy = x_state(3);
+
+	VectorXd polar = VectorXd(3);
+	float c1 = sqrt(px*px + py*py);
+	polar << c1,
+			 atan(py/px),
+			 (px*vx + py*vy) / c1;
+
+	return polar;
+}
+
+void Tools::NormalizeAngle(VectorXd& polar) {
+	float angle = polar(1);
+	while(angle < -M_PI || angle > M_PI) {
+		if(angle < -M_PI) {
+			angle += 2*M_PI;
+		}
+		else {
+			angle -= 2*M_PI;
+		}
+	}
+	polar(1) = angle;
+}
