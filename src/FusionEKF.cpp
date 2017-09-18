@@ -27,6 +27,10 @@ FusionEKF::FusionEKF() {
 				0, 0.0009, 0,
 				0, 0, 0.09;
 
+	// R_radar_ << 0.2, 0, 0,
+				// 0, 0.09, 0,
+				// 0, 0, 0.09;
+
 	/** TODO:
 	* Finish initializing the FusionEKF.
 	* Set the process and measurement noises
@@ -38,8 +42,8 @@ FusionEKF::FusionEKF() {
 
 	// An H matrix for Radar is calculated on the fly each time we get a radar measurement
 
-	noise_ax = 9;
-	noise_ay = 9;
+	noise_ax = 20;
+	noise_ay = 20;
 }
 
 FusionEKF::~FusionEKF() {}
@@ -99,8 +103,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		}
 
 		MatrixXd P_init = MatrixXd(4, 4);
-		P_init << 1, 0, 0, 0,
-				  0, 1, 0, 0,
+		P_init << 10, 0, 0, 0,
+				  0, 10, 0, 0,
 				  0, 0, 1000, 0,
 				  0, 0, 0, 1000;
 
@@ -145,16 +149,19 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) m_type = "RADAR";
 	else m_type = "LIDAR";
 
-	cout << "==== Here's the RAW " << m_type << ": ====" << endl;
-	cout << measurement_pack.raw_measurements_ << endl;
-	cout << "==== END RAW ====" << endl;
+	// if(m_type == "LIDAR") return;
+
+	cout << "==== RECEIVED " << m_type << " ====" << endl;
+	// cout << "==== Here's the RAW " << m_type << ": ====" << endl;
+	// cout << measurement_pack.raw_measurements_ << endl;
+	// cout << "==== END RAW ====" << endl;
 
 	// cout << "Updating State Trans Matrix F" << endl;
 	UpdateStateTransMatrixF(dt);
 	// cout << "Updating Process Covariance Matrix Q" << endl;
 	UpdateProcessCovarianceMatrixQ(dt);
 
-	cout << "Predicting..." << endl;
+	// cout << "Predicting..." << endl;
 	ekf_.Predict();
 
 	/*****************************************************************************
@@ -170,7 +177,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 		// Radar updates
 		ekf_.R_ = R_radar_;
-		cout << "Calculating Jacobian..." << endl;
+		// cout << "Calculating Jacobian..." << endl;
 		ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
 		cout << "Updating for RADAR..." << endl;
 		ekf_.UpdateEKF(z);

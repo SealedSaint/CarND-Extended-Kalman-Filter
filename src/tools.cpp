@@ -30,7 +30,6 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<
 
 	//accumulate squared residuals
 	for(int i=0; i < estimations.size(); ++i){
-		// ... your code here
 		VectorXd residual = estimations[i] - ground_truth[i];
 		VectorXd residual_squared = residual.array() * residual.array();
 		rmse += residual_squared;
@@ -38,9 +37,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<
 	//calculate the mean
 	rmse /= estimations.size();
 	//calculate the squared root
-	rmse = rmse.array().sqrt();
-
-	return rmse;
+	return rmse.array().sqrt();
 }
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {

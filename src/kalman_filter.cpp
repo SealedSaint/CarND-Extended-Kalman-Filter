@@ -35,6 +35,7 @@ void KalmanFilter::Predict() {
 void KalmanFilter::Update(const VectorXd &z) {
 	/** TODO: update the state by using Kalman Filter equations */
 	VectorXd y = z - H_ * x_;
+	cout << "y: " << y << endl;
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
 	MatrixXd K = P_ * Ht * S.inverse();
@@ -52,11 +53,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	*/
 	MatrixXd Hj = H_;
 	// cout << "Calculating y" << endl;
-	cout << "Polar x: " << tools.ConvertToPolar(x_) << endl;
+	// cout << "Polar x: " << tools.ConvertToPolar(x_) << endl;
 	VectorXd y = z - tools.ConvertToPolar(x_);
-	cout << "y before normalize: " << y << endl;
+	// cout << "y before normalize: " << y << endl;
 	tools.NormalizeAngle(y);
-	cout << "y after normalize: " << y << endl;
+	cout << "y: " << y << endl;
 	// cout << "Calculating Hjt" << endl;
 	MatrixXd Hjt = Hj.transpose();
 	// cout << "Calculating S" << endl;
