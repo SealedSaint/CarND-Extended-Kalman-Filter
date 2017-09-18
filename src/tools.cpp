@@ -87,7 +87,7 @@ VectorXd Tools::ConvertToPolar(const VectorXd& x_state) {
 	VectorXd polar = VectorXd(3);
 	float c1 = sqrt(px*px + py*py);
 	polar << c1,
-			 atan(py/px),
+			 atan2(py, px),  // atan2 considers the sign of both arguments to determine quadrant (returns [-pi, pi] instead of [-pi/2, pi/2])
 			 (px*vx + py*vy) / c1;
 
 	return polar;

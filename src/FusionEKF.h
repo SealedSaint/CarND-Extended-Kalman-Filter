@@ -35,7 +35,7 @@ private:
 	MatrixXd R_laser_;
 	MatrixXd R_radar_;
 	MatrixXd H_laser_;
-	MatrixXd Hj_;
+	// An H matrix for Radar is calculated on the fly each time we get a radar measurement
 };
 
 #endif /* FusionEKF_H_ */

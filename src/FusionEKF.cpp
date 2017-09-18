@@ -17,7 +17,6 @@ FusionEKF::FusionEKF() {
 	R_laser_ = MatrixXd(2, 2);
 	R_radar_ = MatrixXd(3, 3);
 	H_laser_ = MatrixXd(2, 4);
-	Hj_ = MatrixXd(3, 4);
 
 	//measurement covariance matrix - laser
 	R_laser_ << 0.0225, 0,
@@ -37,7 +36,7 @@ FusionEKF::FusionEKF() {
 	H_laser_ << 1, 0, 0, 0,
 				0, 1, 0, 0;
 
-	// Hj_ is calculated on the fly each time we get a radar measurement
+	// An H matrix for Radar is calculated on the fly each time we get a radar measurement
 
 	noise_ax = 9;
 	noise_ay = 9;
@@ -142,9 +141,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	* Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
 	*/
 
-	cout << "Updating State Trans Matrix F" << endl;
+	string m_type;
+	if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) m_type = "RADAR";
+	else m_type = "LIDAR";
+
+	cout << "==== Here's the RAW " << m_type << ": ====" << endl;
+	cout << measurement_pack.raw_measurements_ << endl;
+	cout << "==== END RAW ====" << endl;
+
+	// cout << "Updating State Trans Matrix F" << endl;
 	UpdateStateTransMatrixF(dt);
-	cout << "Updating Process Covariance Matrix Q" << endl;
+	// cout << "Updating Process Covariance Matrix Q" << endl;
 	UpdateProcessCovarianceMatrixQ(dt);
 
 	cout << "Predicting..." << endl;
@@ -164,8 +171,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		// Radar updates
 		ekf_.R_ = R_radar_;
 		cout << "Calculating Jacobian..." << endl;
-		Hj_ = tools.CalculateJacobian(ekf_.x_);
-		ekf_.H_ = Hj_;
+		ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
 		cout << "Updating for RADAR..." << endl;
 		ekf_.UpdateEKF(z);
 	}
@@ -179,5 +185,5 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
 	// print the output
 	cout << "x_ = " << ekf_.x_ << endl;
-	cout << "P_ = " << ekf_.P_ << endl;
+	// cout << "P_ = " << ekf_.P_ << endl;
 }

@@ -26,6 +26,10 @@ void KalmanFilter::Predict() {
 	/** TODO: predict the state */
 	x_ = F_ * x_;
 	P_ = F_ * P_ * F_.transpose() + Q_;
+
+	cout << "Prediction:" << endl;
+	cout << "x_ = " << x_ << endl;
+	// cout << "P_ = " << P_ << endl;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
@@ -48,8 +52,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	*/
 	MatrixXd Hj = H_;
 	// cout << "Calculating y" << endl;
+	cout << "Polar x: " << tools.ConvertToPolar(x_) << endl;
 	VectorXd y = z - tools.ConvertToPolar(x_);
+	cout << "y before normalize: " << y << endl;
 	tools.NormalizeAngle(y);
+	cout << "y after normalize: " << y << endl;
 	// cout << "Calculating Hjt" << endl;
 	MatrixXd Hjt = Hj.transpose();
 	// cout << "Calculating S" << endl;
