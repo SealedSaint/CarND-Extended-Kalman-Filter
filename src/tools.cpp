@@ -34,10 +34,9 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<
 		VectorXd residual_squared = residual.array() * residual.array();
 		rmse += residual_squared;
 	}
-	//calculate the mean
-	rmse /= estimations.size();
-	//calculate the squared root
-	return rmse.array().sqrt();
+
+	rmse /= estimations.size();  // calculate the mean
+	return rmse.array().sqrt();  // calculate the squared root
 }
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
@@ -57,7 +56,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	}
 
 	//compute the Jacobian matrix
-	float squared_sum = pow(px, 2) + pow(py, 2);
+	float squared_sum = px*px + py*py;
 
 	float v00 = px / sqrt(squared_sum);
 	float v01 = py / sqrt(squared_sum);
@@ -93,12 +92,8 @@ VectorXd Tools::ConvertToPolar(const VectorXd& x_state) {
 void Tools::NormalizeAngle(VectorXd& polar) {
 	float angle = polar(1);
 	while(angle < -M_PI || angle > M_PI) {
-		if(angle < -M_PI) {
-			angle += 2*M_PI;
-		}
-		else {
-			angle -= 2*M_PI;
-		}
+		if(angle < -M_PI) angle += 2*M_PI;
+		else angle -= 2*M_PI;
 	}
 	polar(1) = angle;
 }
